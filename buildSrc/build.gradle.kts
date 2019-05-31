@@ -11,6 +11,7 @@ plugins {
     id("java-gradle-plugin")
     id("com.gradle.plugin-publish") version "0.10.1"
     id("org.jmailen.kotlinter") version "1.25.2"
+    `maven-publish`
 }
 
 dependencies {
@@ -45,4 +46,10 @@ gradlePlugin {
 
 kotlinDslPluginOptions {
     experimentalWarning.set(false)
+}
+
+publishing {
+    repositories {
+        mavenLocal()
+    }
 }
