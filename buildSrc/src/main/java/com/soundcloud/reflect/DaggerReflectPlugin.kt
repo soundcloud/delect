@@ -24,14 +24,9 @@ class DaggerReflectPlugin : Plugin<Project> {
             val extension = extensions.create("delect", DelectExtension::class.java)
 
             configurations.all {
-                // First remove the dagger android processor.
-                withDependencies {
-                    removeIf { group == "com.google.dagger" && name == "dagger-android-processor" }
-                }
-
                 dependencies.all {
                     // If we depend on the dagger runtime, also add the dagger reflect runtime.
-                    if (group == "com.google.dagger" && name == "dagger") {
+                    if (group == daggerGroupId && name == "dagger") {
                         dependencies {
                             add("implementation", "com.jakewharton.dagger:dagger-reflect:${extension.daggerReflectVersion}")
                         }
@@ -39,7 +34,7 @@ class DaggerReflectPlugin : Plugin<Project> {
                 }
                 resolutionStrategy {
                     componentSelection {
-                        withModule("com.google.dagger:dagger") {
+                        withModule("$daggerGroupId:dagger") {
                             // TODO check if version is 2.21 or less
                             // We need to use at least 2.22 in order for certain dagger annotations to have runtime retention.
                             if (candidate.version == "2.21") {
@@ -50,11 +45,14 @@ class DaggerReflectPlugin : Plugin<Project> {
                     dependencySubstitution {
                         // Substitute dagger compiler for dagger reflect compiler.
                         substitute(
-                            module("com.google.dagger:dagger-compiler")
+                            module("$daggerGroupId:dagger-compiler")
                         ).apply {
                             with(module("com.jakewharton.dagger:dagger-reflect-compiler:${extension.daggerReflectVersion}"))
                             because("We want to build faster.")
                         }
+
+                        substitute(module("$daggerGroupId:dagger-android-processor"))
+                            .with(module("com.jakewharton.dagger:dagger-reflect-compiler:${extension.daggerReflectVersion}"))
                     }
                 }
             }
@@ -63,5 +61,9 @@ class DaggerReflectPlugin : Plugin<Project> {
 
     private fun shouldActivateDaggerReflect(target: Project): Boolean {
         return (target.properties.containsKey("android.injected.invoked.from.ide") || (target.properties.containsKey("dagger.reflect") && target.properties["dagger.reflect"] == "true"))
+    }
+
+    companion object {
+        const val daggerGroupId = "com.google.dagger"
     }
 }
