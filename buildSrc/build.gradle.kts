@@ -1,5 +1,5 @@
 group = "com.soundcloud.delect"
-version = "0.1.0"
+version = "0.1.0-SNAPSHOT"
 
 repositories {
     google()
@@ -24,7 +24,7 @@ dependencies {
 pluginBundle {
     website = "https://github.com/soundcloud/delect"
     vcsUrl = "https://github.com/soundcloud/delect"
-    tags = listOf("dagger", "di", "delect")
+    tags = listOf("dagger", "di", "delect", "reflect")
 
     mavenCoordinates {
         artifactId = "delect"

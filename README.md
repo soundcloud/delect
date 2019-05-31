@@ -1,6 +1,6 @@
 # Delect - The Gradle Plugin for Dagger Reflect
 
-1. Add this to your project's root build.gradle:
+1. Add the plugin to your project's root build.gradle:
 ```
 apply plugin: 'com.soundcloud.delect'
 ```
@@ -9,4 +9,4 @@ apply plugin: 'com.soundcloud.delect'
 @Retention(RUNTIME)
 ```
 
-2. Build the app as normal and skip all the dagger annotation procesing!
+2. Build the app as normal and skip all the dagger annotation processing!
