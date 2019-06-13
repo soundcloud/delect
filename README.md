@@ -3,6 +3,7 @@
 Delect automatically substitutes Dagger for Dagger Reflect for development builds.
 
 [Dagger](https://github.com/google/dagger), a dependency injection framework for Java, can slow down compilation with its lengthy annotation processing and code generation.
+
 [Dagger Reflect](https://github.com/jakewharton/dagger-reflect) uses the same API as Dagger but swaps the compile time annotation processing for runtime based reflection.
 
 ## Usage
@@ -17,7 +18,9 @@ apply plugin: 'com.soundcloud.delect'
 ```
 @Retention(RUNTIME)
 ```
-3. Build the app as normal and skip all the Dagger annotation processing!
+3. Add `dagger.reflect=true` to `gradle.properties`.
+  You can also add it to `~/.gradle/gradle.properties` so it doesn't need to be checked int o the project.
+4. Build -- and skip all that pesky code generation!
 
 
 ## Plugin Development
