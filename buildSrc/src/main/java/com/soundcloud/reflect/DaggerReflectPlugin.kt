@@ -28,7 +28,7 @@ class DaggerReflectPlugin : Plugin<Project> {
                     // If we depend on the dagger runtime, also add the dagger reflect runtime.
                     if (group == daggerGroupId && name == "dagger") {
                         dependencies {
-                            add("implementation", "com.jakewharton.dagger:dagger-reflect:${extension.daggerReflectVersion}")
+                            add("implementation", "$reflectDaggerGroupId:dagger-reflect:${extension.daggerReflectVersion}")
                         }
                     }
                 }
@@ -47,12 +47,12 @@ class DaggerReflectPlugin : Plugin<Project> {
                         substitute(
                             module("$daggerGroupId:dagger-compiler")
                         ).apply {
-                            with(module("com.jakewharton.dagger:dagger-reflect-compiler:${extension.daggerReflectVersion}"))
+                            with(module("$reflectDaggerGroupId:dagger-reflect-compiler:${extension.daggerReflectVersion}"))
                             because("We want to build faster.")
                         }
 
                         substitute(module("$daggerGroupId:dagger-android-processor"))
-                            .with(module("com.jakewharton.dagger:dagger-reflect-compiler:${extension.daggerReflectVersion}"))
+                            .with(module("$reflectDaggerGroupId:dagger-reflect-compiler:${extension.daggerReflectVersion}"))
                     }
                 }
             }
@@ -65,5 +65,6 @@ class DaggerReflectPlugin : Plugin<Project> {
 
     companion object {
         const val daggerGroupId = "com.google.dagger"
+        const val reflectDaggerGroupId = "com.jakewharton.dagger"
     }
 }
