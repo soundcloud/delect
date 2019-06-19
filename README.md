@@ -19,7 +19,7 @@ apply plugin: 'com.soundcloud.delect'
 @Retention(RUNTIME)
 ```
 3. Add `dagger.reflect=true` to `gradle.properties`.
-  You can also add it to `~/.gradle/gradle.properties` so it doesn't need to be checked int o the project.
+  You can also add it to `~/.gradle/gradle.properties` so it doesn't need to be checked into the project.
 4. Build -- and skip all that pesky code generation!
 
 
