@@ -29,6 +29,10 @@ To publish to maven local:
 ```
 ./gradlew -b buildSrc/build.gradle.kts publishToMavenLocal
 ```
+To publish:
+```
+./gradlew -b buildSrc/build.gradle.kts publish
+```
 
 ## License
 
