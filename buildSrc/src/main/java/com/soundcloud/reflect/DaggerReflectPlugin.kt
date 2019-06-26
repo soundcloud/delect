@@ -7,7 +7,9 @@ import org.gradle.kotlin.dsl.repositories
 
 class DaggerReflectPlugin : Plugin<Project> {
     override fun apply(target: Project) {
-        if (!shouldActivateDaggerReflect(target)) {
+        val extension = target.extensions.create("delect", DelectExtension::class.java)
+
+        if (!shouldActivateDaggerReflect(target, extension.useReflectForASBuilds)) {
             // we don't do anything if we haven't been invoked from the ide.
             return
         }
@@ -20,8 +22,6 @@ class DaggerReflectPlugin : Plugin<Project> {
             repositories {
                 maven { url = uri("https://oss.sonatype.org/content/repositories/snapshots") }
             }
-
-            val extension = extensions.create("delect", DelectExtension::class.java)
 
             configurations.all {
                 dependencies.all {
@@ -59,8 +59,8 @@ class DaggerReflectPlugin : Plugin<Project> {
         }
     }
 
-    private fun shouldActivateDaggerReflect(target: Project): Boolean {
-        return (target.properties.containsKey("android.injected.invoked.from.ide") || (target.properties.containsKey("dagger.reflect") && target.properties["dagger.reflect"] == "true"))
+    private fun shouldActivateDaggerReflect(target: Project, useReflectForIdeBuilds: Boolean): Boolean {
+        return (useReflectForIdeBuilds && target.properties.containsKey("android.injected.invoked.from.ide") || (target.properties.containsKey("dagger.reflect") && target.properties["dagger.reflect"] == "true"))
     }
 
     companion object {
