@@ -24,12 +24,12 @@ class DaggerReflectPlugin : Plugin<Project> {
                 maven { url = uri("https://oss.sonatype.org/content/repositories/snapshots") }
             }
 
-            configurations.all {
+            configurations.all config@ {
                 dependencies.all {
                     // If we depend on the dagger runtime, also add the dagger reflect runtime.
                     if (group == daggerGroupId && name == "dagger") {
                         dependencies {
-                            add("implementation", "$reflectDaggerGroupId:dagger-reflect:${extension.daggerReflectVersion}")
+                            add(this@config.name, "$reflectDaggerGroupId:dagger-reflect:${extension.daggerReflectVersion}")
                         }
                     }
                 }
