@@ -4,6 +4,7 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.dependencies
 import org.gradle.kotlin.dsl.repositories
+import org.gradle.util.VersionNumber
 
 class DaggerReflectPlugin : Plugin<Project> {
     override fun apply(target: Project) {
@@ -35,9 +36,8 @@ class DaggerReflectPlugin : Plugin<Project> {
                 resolutionStrategy {
                     componentSelection {
                         withModule("$daggerGroupId:dagger") {
-                            // TODO check if version is 2.21 or less
-                            // We need to use at least 2.22 in order for certain dagger annotations to have runtime retention.
-                            if (candidate.version == "2.21") {
+                            if (VersionNumber.parse(candidate.version) < minSupportedDaggerVersion) {
+                                // We need to use at least 2.22 in order for certain dagger annotations to have runtime retention.
                                 reject("Version must be 2.22 or higher.")
                             }
                         }
@@ -66,5 +66,6 @@ class DaggerReflectPlugin : Plugin<Project> {
     companion object {
         const val daggerGroupId = "com.google.dagger"
         const val reflectDaggerGroupId = "com.jakewharton.dagger"
+        val minSupportedDaggerVersion = VersionNumber.parse("2.22")
     }
 }
