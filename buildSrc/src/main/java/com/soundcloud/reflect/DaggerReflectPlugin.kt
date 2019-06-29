@@ -2,34 +2,36 @@ package com.soundcloud.reflect
 
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.kotlin.dsl.create
 import org.gradle.kotlin.dsl.dependencies
 import org.gradle.kotlin.dsl.repositories
 import org.gradle.util.VersionNumber
 
 class DaggerReflectPlugin : Plugin<Project> {
     override fun apply(target: Project) {
-        val extension = target.extensions.create("delect", DelectExtension::class.java)
-
-        if (!shouldActivateDaggerReflect(target, extension.useReflectForASBuilds)) {
-            // we don't do anything if we haven't been invoked from the ide.
-            return
+        val extension = target.extensions.create<DelectExtension>("delect")
+        target.afterEvaluate {
+            if (shouldActivateDaggerReflect(extension.useReflectForASBuilds)) {
+                target.logger.warn("Using Dagger Reflect")
+                activateDaggerReflect(extension.daggerReflectVersion)
+            }
         }
+    }
 
-        target.logger.warn("Using Dagger Reflect")
-
-        target.allprojects {
+    private fun Project.activateDaggerReflect(daggerReflectVersion: String) {
+        allprojects {
 
             // For now we need to add the snapshot repository because dagger-reflect isn't yet published in maven central.
             repositories {
-                maven { url = uri("https://oss.sonatype.org/content/repositories/snapshots") }
+                maven { url = uri("https://oss.sonatype.org/content/repositories/snapshots")  }
             }
 
-            configurations.all config@ {
+            configurations.all config@{
                 dependencies.all {
                     // If we depend on the dagger runtime, also add the dagger reflect runtime.
                     if (group == daggerGroupId && name == "dagger") {
                         dependencies {
-                            add(this@config.name, "$reflectDaggerGroupId:dagger-reflect:${extension.daggerReflectVersion}")
+                            add(this@config.name, "$reflectDaggerGroupId:dagger-reflect:$daggerReflectVersion")
                         }
                     }
                 }
@@ -47,20 +49,21 @@ class DaggerReflectPlugin : Plugin<Project> {
                         substitute(
                             module("$daggerGroupId:dagger-compiler")
                         ).apply {
-                            with(module("$reflectDaggerGroupId:dagger-reflect-compiler:${extension.daggerReflectVersion}"))
+                            with(module("$reflectDaggerGroupId:dagger-reflect-compiler:$daggerReflectVersion"))
                             because("We want to build faster.")
                         }
 
                         substitute(module("$daggerGroupId:dagger-android-processor"))
-                            .with(module("$reflectDaggerGroupId:dagger-reflect-compiler:${extension.daggerReflectVersion}"))
+                            .with(module("$reflectDaggerGroupId:dagger-reflect-compiler:$daggerReflectVersion"))
                     }
                 }
             }
         }
     }
 
-    private fun shouldActivateDaggerReflect(target: Project, useReflectForIdeBuilds: Boolean): Boolean {
-        return (useReflectForIdeBuilds && target.properties.containsKey("android.injected.invoked.from.ide") || (target.properties.containsKey("dagger.reflect") && target.properties["dagger.reflect"] == "true"))
+    private fun Project.shouldActivateDaggerReflect(useReflectForIdeBuilds: Boolean): Boolean {
+        return (useReflectForIdeBuilds && properties.containsKey("android.injected.invoked.from.ide") ||
+                (properties.containsKey("dagger.reflect") && properties["dagger.reflect"] == "true"))
     }
 
     companion object {
