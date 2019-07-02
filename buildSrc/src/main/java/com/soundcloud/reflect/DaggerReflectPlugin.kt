@@ -3,7 +3,6 @@ package com.soundcloud.reflect
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.dependencies
-import org.gradle.kotlin.dsl.repositories
 import org.gradle.util.VersionNumber
 
 class DaggerReflectPlugin : Plugin<Project> {
@@ -18,13 +17,7 @@ class DaggerReflectPlugin : Plugin<Project> {
         target.logger.warn("Using Dagger Reflect")
 
         target.allprojects {
-
-            // For now we need to add the snapshot repository because dagger-reflect isn't yet published in maven central.
-            repositories {
-                maven { url = uri("https://oss.sonatype.org/content/repositories/snapshots") }
-            }
-
-            configurations.all config@ {
+            configurations.all config@{
                 dependencies.all {
                     // If we depend on the dagger runtime, also add the dagger reflect runtime.
                     if (group == daggerGroupId && name == "dagger") {
