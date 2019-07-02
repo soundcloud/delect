@@ -2,10 +2,6 @@ plugins {
     id("com.soundcloud.delect")
 } 
 
-delect {
-    useReflectForASBuilds = true
-}
-
 allprojects {
     repositories {
         mavenCentral()

@@ -1,36 +1,29 @@
 # Delect - The Gradle Plugin for Dagger Reflect
 
-Delect automatically substitutes Dagger for Dagger Reflect for development builds.
+Delect automatically substitutes Dagger for Dagger Reflect for faster local builds.
 
 [Dagger](https://github.com/google/dagger), a dependency injection framework for Java, can slow down compilation with its lengthy annotation processing and code generation.
 
 [Dagger Reflect](https://github.com/jakewharton/dagger-reflect) uses the same API as Dagger but swaps the compile time annotation processing for runtime based reflection.
 
 ## Usage
+Delect uses the [partial reflection approach](https://github.com/jakewharton/dagger-reflect#usage).
+
 1. Add the plugin to your project's root build.gradle:
 ```
 buildscript {
-  classpath 'com.soundcloud.delect:delect-plugin:0.1.0-SNAPSHOT'
+  classpath 'com.soundcloud.delect:delect-plugin:0.1.0'
 }
 apply plugin: 'com.soundcloud.delect'
 ```
-2. Add the runtime retention policy to all `@Qualifier` annotations:
+2. Make sure to use the `@Component.Builder` or `@Component.Factory` to create component instances.
+3. Add the runtime retention policy to all `@Qualifier`, `@MapKey` and other custom Dagger annotations:
 ```
 @Retention(RUNTIME)
 ```
-3. Add `dagger.reflect=true` to `gradle.properties`.
+4. Add `dagger.reflect=true` to `gradle.properties`.
   You can also add it to `~/.gradle/gradle.properties` so it doesn't need to be checked into the project.
-4. Build -- and skip all that pesky code generation!
-
-## Configuration
-
-* To enable Dagger Reflect for builds initiated from Android Studio (whether or not `dagger.reflect=true`):
-```
-delect {
-  useReflectForASBuilds = true
-}
-```
-By default this is false.
+5. Build -- and skip all that pesky code generation!
 
 ## Plugin Development
 
