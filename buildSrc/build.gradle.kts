@@ -42,6 +42,11 @@ tasks.register<Jar>("sourcesJar") {
     archiveClassifier.set("sources")
 }
 
+tasks.register<Jar>("javadocJar") {
+    from(tasks.javadoc)
+    archiveClassifier.set("javadoc")
+}
+
 val isReleaseBuild : Boolean = !version.toString().endsWith("SNAPSHOT")
 
 val sonatypeUsername : String? by project
@@ -65,6 +70,7 @@ publishing {
         create<MavenPublication>("mavenJava") {
             from(components["java"])
             artifact(tasks["sourcesJar"])
+            artifact(tasks["javadocJar"])
             pom {
                 name.set("Delect")
                 description.set("The Gradle Plugin for Dagger Reflect")
