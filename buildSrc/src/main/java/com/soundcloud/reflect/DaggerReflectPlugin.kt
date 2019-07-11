@@ -22,7 +22,18 @@ class DaggerReflectPlugin : Plugin<Project> {
                     // If we depend on the dagger runtime, also add the dagger reflect runtime.
                     if (group == daggerGroupId && name == "dagger") {
                         dependencies {
-                            add(this@config.name, "$reflectDaggerGroupId:dagger-reflect:${extension.daggerReflectVersion}")
+                            add(
+                                this@config.name,
+                                "$reflectDaggerGroupId:dagger-reflect:${extension.daggerReflectVersion}"
+                            )
+                            if (maxUnsupportedDaggerLintVersion < VersionNumber.parse(extension.daggerReflectVersion)) {
+                                whenLintPluginAdded {
+                                    add(
+                                        "lintChecks",
+                                        "$reflectDaggerGroupId:dagger-reflect-lint:${extension.daggerReflectVersion}"
+                                    )
+                                }
+                            }
                         }
                     }
                 }
@@ -31,7 +42,7 @@ class DaggerReflectPlugin : Plugin<Project> {
                         withModule("$daggerGroupId:dagger") {
                             if (VersionNumber.parse(candidate.version) < minSupportedDaggerVersion) {
                                 // We need to use at least 2.22 in order for certain dagger annotations to have runtime retention.
-                                reject("Version must be 2.22 or higher.")
+                                reject("Version must be $minSupportedDaggerVersion or higher.")
                             }
                         }
                     }
@@ -56,9 +67,17 @@ class DaggerReflectPlugin : Plugin<Project> {
         return (target.properties.containsKey("dagger.reflect") && target.properties["dagger.reflect"] == "true")
     }
 
+    private fun Project.whenLintPluginAdded(block: () -> Unit) {
+        supportedLintPlugins.forEach { pluginId ->
+            plugins.withId(pluginId) { block() }
+        }
+    }
+
     companion object {
         const val daggerGroupId = "com.google.dagger"
         const val reflectDaggerGroupId = "com.jakewharton.dagger"
         val minSupportedDaggerVersion = VersionNumber.parse("2.22")
+        val maxUnsupportedDaggerLintVersion = VersionNumber.parse("0.1.0")
+        val supportedLintPlugins = listOf("com.android.lint", "com.android.application", "com.android.library")
     }
 }
