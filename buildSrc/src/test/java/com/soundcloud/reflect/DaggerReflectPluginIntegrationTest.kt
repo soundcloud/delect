@@ -12,13 +12,8 @@ class DaggerReflectPluginIntegrationTest {
     val testProjectDir = TemporaryFolder()
 
     @Test
-    fun testPluginWithoutDaggerReflect() {
-        val fixtureName = "java-module"
-        writePluginBuildGradle()
-
-        writeSettingsGradle(fixtureName)
-
-        copyProjectFixture(fixtureName)
+    fun `test plugin without dagger reflect enabled`() {
+        setupJavaModuleTextFixtureAndDelectPlugin()
 
         val result = GradleRunner.create()
             .withProjectDir(testProjectDir.root)
@@ -28,16 +23,12 @@ class DaggerReflectPluginIntegrationTest {
 
         assertThat(result.output).contains("dagger reflect class not available")
     }
+
     @Test
-    fun testWithDaggerReflect() {
-        val fixtureName = "java-module"
-        writePluginBuildGradle()
+    fun `test plugin with dagger reflect enabled`() {
+        setupJavaModuleTextFixtureAndDelectPlugin()
 
-        writeSettingsGradle(fixtureName)
-
-        copyProjectFixture(fixtureName)
-
-        setDaggerReflectEnabled()
+        enableDaggerReflect()
         val result = GradleRunner.create()
             .withProjectDir(testProjectDir.root)
             .withPluginClasspath()
@@ -45,6 +36,15 @@ class DaggerReflectPluginIntegrationTest {
             .build()
 
         assertThat(result.output).contains("dagger reflect class is available")
+    }
+
+    private fun setupJavaModuleTextFixtureAndDelectPlugin() {
+        val fixtureName = "java-module"
+        writePluginBuildGradle()
+
+        writeSettingsGradle(fixtureName)
+
+        copyProjectFixture(fixtureName)
     }
 
     private fun writePluginBuildGradle() {
@@ -61,7 +61,7 @@ class DaggerReflectPluginIntegrationTest {
         """.trimIndent())
     }
 
-    private fun setDaggerReflectEnabled() {
+    private fun enableDaggerReflect() {
         testProjectDir.newFile("gradle.properties").writeText("dagger.reflect=true")
     }
 
