@@ -18,6 +18,12 @@ class DaggerReflectPlugin : Plugin<Project> {
 
         target.allprojects {
             configurations.all config@{
+                if (!extension.addReflectAnnotationProcessor) {
+                    withDependencies {
+                        removeIf { it.group == daggerGroupId && it.name == "dagger-compiler" }
+                        removeIf { it.group == daggerGroupId && it.name == "dagger-android-processor" }
+                    }
+                }
                 dependencies.all {
                     // If we depend on the dagger runtime, also add the dagger reflect runtime.
                     if (group == daggerGroupId && name == "dagger") {
@@ -46,17 +52,19 @@ class DaggerReflectPlugin : Plugin<Project> {
                             }
                         }
                     }
-                    dependencySubstitution {
-                        // Substitute dagger compiler for dagger reflect compiler.
-                        substitute(
-                            module("$daggerGroupId:dagger-compiler")
-                        ).apply {
-                            with(module("$reflectDaggerGroupId:dagger-reflect-compiler:${extension.daggerReflectVersion}"))
-                            because("We want to build faster.")
-                        }
+                    if (extension.addReflectAnnotationProcessor) {
+                        dependencySubstitution {
+                            // Substitute dagger compiler for dagger reflect compiler.
+                            substitute(
+                                module("$daggerGroupId:dagger-compiler")
+                            ).apply {
+                                with(module("$reflectDaggerGroupId:dagger-reflect-compiler:${extension.daggerReflectVersion}"))
+                                because("We want to build faster.")
+                            }
 
-                        substitute(module("$daggerGroupId:dagger-android-processor"))
-                            .with(module("$reflectDaggerGroupId:dagger-reflect-compiler:${extension.daggerReflectVersion}"))
+                            substitute(module("$daggerGroupId:dagger-android-processor"))
+                                .with(module("$reflectDaggerGroupId:dagger-reflect-compiler:${extension.daggerReflectVersion}"))
+                        }
                     }
                 }
             }

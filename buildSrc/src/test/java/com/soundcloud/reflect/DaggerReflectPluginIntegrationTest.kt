@@ -38,6 +38,59 @@ class DaggerReflectPluginIntegrationTest {
         assertThat(result.output).contains("dagger reflect class is available")
     }
 
+    @Test
+    fun `test no code generation fails compile when referencing generated code`() {
+        val fixtureName = "java-module"
+        testProjectDir.newFile("build.gradle").writeText("""
+            plugins {
+                id 'com.soundcloud.delect'
+            }
+            delect {
+                addReflectAnnotationProcessor = false
+            }
+        """.trimIndent())
+
+        writeSettingsGradle(fixtureName)
+        copyProjectFixture(fixtureName)
+        enableDaggerReflect()
+
+        val result = GradleRunner.create()
+            .withProjectDir(testProjectDir.root)
+            .withPluginClasspath()
+            .withArguments("run")
+            .buildAndFail()
+
+        assertThat(result.output).contains("error: cannot find symbol\n" +
+                "        AppComponent appComponent = DaggerAppComponent.create();\n" +
+                "                                    ^\n" +
+                "  symbol:   variable DaggerAppComponent")
+    }
+
+    @Test
+    fun `test no code generation succeeds with full reflection`() {
+        val fixtureName = "java-module-full-reflect"
+        testProjectDir.newFile("build.gradle").writeText("""
+            plugins {
+                id 'com.soundcloud.delect'
+            }
+            delect {
+                addReflectAnnotationProcessor = false
+            }
+        """.trimIndent())
+
+        writeSettingsGradle(fixtureName)
+        copyProjectFixture(fixtureName)
+        enableDaggerReflect()
+
+        val result = GradleRunner.create()
+            .withProjectDir(testProjectDir.root)
+            .withPluginClasspath()
+            .withArguments("run")
+            .build()
+
+        assertThat(result.output).contains("dagger reflect class is available")
+    }
+
     private fun setupJavaModuleTextFixtureAndDelectPlugin() {
         val fixtureName = "java-module"
         writePluginBuildGradle()
