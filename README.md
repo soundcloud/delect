@@ -12,7 +12,7 @@ Delect uses the [partial reflection approach](https://github.com/jakewharton/dag
 1. Add the plugin to your project's root build.gradle:
 ```
 buildscript {
-  classpath 'com.soundcloud.delect:delect-plugin:0.1.0'
+  classpath 'com.soundcloud.delect:delect-plugin:0.2.0'
 }
 apply plugin: 'com.soundcloud.delect'
 ```
