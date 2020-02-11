@@ -11,4 +11,6 @@ open class DelectExtension {
      * https://github.com/jakewharton/dagger-reflect#full-reflection
      */
     var addReflectAnnotationProcessor = true
+
+    var enableReflectLintCheck = true
 }

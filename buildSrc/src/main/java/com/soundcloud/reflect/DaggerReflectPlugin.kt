@@ -32,7 +32,8 @@ class DaggerReflectPlugin : Plugin<Project> {
                                 this@config.name,
                                 "$reflectDaggerGroupId:dagger-reflect:${extension.daggerReflectVersion}"
                             )
-                            if (maxUnsupportedDaggerLintVersion < VersionNumber.parse(extension.daggerReflectVersion)) {
+                            if (extension.enableReflectLintCheck &&
+                                (maxUnsupportedDaggerLintVersion < VersionNumber.parse(extension.daggerReflectVersion))) {
                                 whenLintPluginAdded {
                                     add(
                                         "lintChecks",
