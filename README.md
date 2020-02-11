@@ -12,7 +12,7 @@ Delect uses the [partial reflection approach](https://github.com/jakewharton/dag
 1. Add the plugin to your project's root build.gradle:
 ```
 buildscript {
-  classpath 'com.soundcloud.delect:delect-plugin:0.2.0'
+  classpath 'com.soundcloud.delect:delect-plugin:0.2.1'
 }
 apply plugin: 'com.soundcloud.delect'
 ```
@@ -34,6 +34,16 @@ To publish to maven local:
 To publish:
 ```
 ./gradlew -b buildSrc/build.gradle.kts publishMavenJavaPublicationToMavenRepository
+```
+
+## Found more than one jar in the 'lintChecks' configuration.
+
+This is a [bug in AGP](https://issuetracker.google.com/issues/141840950).
+To disable Dagger Reflect lint checks:
+```groovy
+delect {
+  enableReflectLintCheck = false
+}
 ```
 
 ## License
