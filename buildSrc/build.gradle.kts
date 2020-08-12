@@ -9,7 +9,7 @@ repositories {
 plugins {
     `kotlin-dsl`
     id("java-gradle-plugin")
-    id("org.jmailen.kotlinter") version "1.25.2"
+    id("org.jmailen.kotlinter") version "2.4.1"
     `maven-publish`
     signing
 }
@@ -18,8 +18,8 @@ dependencies {
     compileOnly(gradleApi())
 
     testImplementation(gradleTestKit())
-    testImplementation("junit:junit:4.12")
-    testImplementation("com.google.truth:truth:0.42")
+    testImplementation("junit:junit:4.13")
+    testImplementation("com.google.truth:truth:1.0.1")
 }
 
 gradlePlugin {

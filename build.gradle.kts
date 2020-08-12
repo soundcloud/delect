@@ -1,6 +1,6 @@
 plugins {
     id("com.soundcloud.delect")
-} 
+}
 
 allprojects {
     repositories {
@@ -10,5 +10,5 @@ allprojects {
 
 tasks.wrapper {
     distributionType = Wrapper.DistributionType.ALL
-    gradleVersion = "6.1.1"
+    gradleVersion = "6.6"
 }

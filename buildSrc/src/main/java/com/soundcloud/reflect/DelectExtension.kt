@@ -1,7 +1,7 @@
 package com.soundcloud.reflect
 
 open class DelectExtension {
-    var daggerReflectVersion = "0.2.0"
+    var daggerReflectVersion = "0.3.0"
     /**
      * By default, we use the Reflect Annotation Processor to connect the App's code the the
      * Dagger Reflect runtime as outlined in the partial reflection approach:
