@@ -97,6 +97,28 @@ class DaggerReflectPluginIntegrationTest {
         assertThat(result.output).contains("dagger reflect class is available")
     }
 
+    @Test
+    fun `is compatible with the configuration cache`() {
+        setupJavaModuleTextFixtureAndDelectPlugin()
+
+        enableDaggerReflect()
+        val runner = GradleRunner.create()
+            .withProjectDir(testProjectDir.root)
+            .withPluginClasspath()
+            .withGradleVersion("6.6")
+            .withArguments("run", "--configuration-cache")
+
+        val result = runner.build()
+        assertThat(result.output).contains("SUCCESS")
+        assertThat(result.output).contains("dagger reflect class is available")
+        assertThat(result.output).contains("Configuration cache entry stored.")
+
+        val resultTwo = runner.build()
+        assertThat(resultTwo.output).contains("SUCCESS")
+        assertThat(resultTwo.output).contains("dagger reflect class is available")
+        assertThat(resultTwo.output).contains("Reusing configuration cache.")
+    }
+
     private fun setupJavaModuleTextFixtureAndDelectPlugin() {
         val fixtureName = "java-module"
         writePluginBuildGradle()
