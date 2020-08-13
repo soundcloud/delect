@@ -10,7 +10,6 @@ class DaggerReflectPlugin : Plugin<Project> {
         val extension = target.extensions.create("delect", DelectExtension::class.java)
 
         if (!shouldActivateDaggerReflect(target)) {
-            // we don't do anything if we haven't been invoked from the ide.
             return
         }
 
@@ -74,7 +73,8 @@ class DaggerReflectPlugin : Plugin<Project> {
     }
 
     private fun shouldActivateDaggerReflect(target: Project): Boolean {
-        return (target.properties.containsKey("dagger.reflect") && target.properties["dagger.reflect"] == "true")
+        val propertyProvider = target.providers.gradleProperty("dagger.reflect").forUseAtConfigurationTime()
+        return (propertyProvider.isPresent && propertyProvider.get() == "true")
     }
 
     private fun Project.whenLintPluginAdded(block: () -> Unit) {
