@@ -67,37 +67,45 @@ publishing {
         }
     }
     publications {
-        create<MavenPublication>("mavenJava") {
-            from(components["java"])
-            artifact(tasks["sourcesJar"])
-            artifact(tasks["javadocJar"])
-            pom {
-                name.set("Delect")
-                description.set("The Gradle Plugin for Dagger Reflect")
-                url.set("https://github.com/soundcloud/delect")
-                licenses {
-                    license {
-                        name.set("The Apache License, Version 2.0")
-                        url.set("http://www.apache.org/licenses/LICENSE-2.0.txt")
-                    }
-                }
-                developers {
-                    developer {
-                        id.set("SoundCloud")
-                        name.set("SoundCloud")
-                    }
-                }
-                scm {
-                    connection.set("scm:git:git://github.com/soundcloud/delect.git")
-                    developerConnection.set("scm:git:ssh://github.com/soundcloud/delect.git")
-                    url.set("https://github.com/soundcloud/delect")
-                }
+        afterEvaluate {
+            named<MavenPublication>("pluginMaven") {
+                signing.sign(this)
+                artifact(tasks["sourcesJar"])
+                artifact(tasks["javadocJar"])
+                pom.configureForDelect()
+            }
+            named<MavenPublication>("delectPluginMarkerMaven") {
+                signing.sign(this)
+                pom.configureForDelect()
             }
         }
     }
 }
 
+fun org.gradle.api.publish.maven.MavenPom.configureForDelect() {
+    name.set("Delect")
+    description.set("The Gradle Plugin for Dagger Reflect")
+    url.set("https://github.com/soundcloud/delect")
+    licenses {
+        license {
+            name.set("The Apache License, Version 2.0")
+            url.set("http://www.apache.org/licenses/LICENSE-2.0.txt")
+        }
+    }
+    developers {
+        developer {
+            id.set("SoundCloud")
+            name.set("SoundCloud")
+        }
+    }
+    scm {
+        connection.set("scm:git:git://github.com/soundcloud/delect.git")
+        developerConnection.set("scm:git:ssh://github.com/soundcloud/delect.git")
+        url.set("https://github.com/soundcloud/delect")
+    }
+}
+
+
 signing {
-    setRequired(isReleaseBuild)
-    sign(publishing.publications["mavenJava"])
+    isRequired = isReleaseBuild
 }

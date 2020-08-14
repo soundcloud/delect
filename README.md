@@ -31,9 +31,9 @@ To publish to maven local:
 ```
 ./gradlew -b buildSrc/build.gradle.kts publishToMavenLocal
 ```
-To publish:
+To publish to maven central:
 ```
-./gradlew -b buildSrc/build.gradle.kts publishMavenJavaPublicationToMavenRepository
+./gradlew -b buildSrc/build.gradle.kts publishAllPublicationsToMavenRepository
 ```
 
 ## Found more than one jar in the 'lintChecks' configuration.
