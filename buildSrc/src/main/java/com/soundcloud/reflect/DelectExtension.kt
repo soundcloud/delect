@@ -1,12 +1,15 @@
 package com.soundcloud.reflect
 
-open class DelectExtension {
+import org.gradle.api.model.ObjectFactory
+import org.gradle.api.provider.Property
+
+open class DelectExtension(factory: ObjectFactory) {
     var daggerReflectVersion = "0.3.0"
 
     /**
      * Whether or not the plugin is enabled. If set, takes precedence over `gradle.properties` configuration
      */
-    var enabled: Boolean? = null
+    val enabled: Property<Boolean> = factory.property(Boolean::class.java)
 
     /**
      * By default, we use the Reflect Annotation Processor to connect the App's code the the

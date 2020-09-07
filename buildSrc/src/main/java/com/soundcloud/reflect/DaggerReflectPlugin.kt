@@ -22,11 +22,12 @@ class DaggerReflectPlugin : Plugin<Project> {
         }
     }
 
-    private fun shouldActivateDaggerReflect(target: Project, extension: DelectExtension): Boolean {
-        return extension.enabled ?: run {
-            val provider = target.providers.gradleProperty("dagger.reflect").forUseAtConfigurationTime()
-            provider.isPresent && provider.get() == "true"
-        }
+    private fun shouldActivateDaggerReflect(target: Project, extension: DelectExtension): Boolean =
+        extension.enabled.getOrElse(isActivatedThroughGradleProperties(target))
+
+    private fun isActivatedThroughGradleProperties(target: Project): Boolean {
+        val provider = target.providers.gradleProperty("dagger.reflect").forUseAtConfigurationTime()
+        return provider.isPresent && provider.get() == "true"
     }
 
     private fun activateDaggerReflect(target: Project, extension: DelectExtension) {
