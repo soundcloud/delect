@@ -1,5 +1,6 @@
 package com.soundcloud.reflect
 
+import org.gradle.api.GradleException
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.dependencies
@@ -7,14 +8,28 @@ import org.gradle.util.VersionNumber
 
 class DaggerReflectPlugin : Plugin<Project> {
     override fun apply(target: Project) {
-        val extension = target.extensions.create("delect", DelectExtension::class.java)
-
-        if (!shouldActivateDaggerReflect(target)) {
-            return
+        if (target != target.rootProject) {
+            throw GradleException("Plugin must be applied to the root project")
         }
 
-        target.logger.warn("Using Dagger Reflect")
+        val extension = target.extensions.create("delect", DelectExtension::class.java)
 
+        target.afterEvaluate {
+            if (shouldActivateDaggerReflect(target, extension)) {
+                target.logger.warn("Using Dagger Reflect")
+                activateDaggerReflect(target, extension)
+            }
+        }
+    }
+
+    private fun shouldActivateDaggerReflect(target: Project, extension: DelectExtension): Boolean {
+        return extension.enabled ?: run {
+            val provider = target.providers.gradleProperty("dagger.reflect").forUseAtConfigurationTime()
+            provider.isPresent && provider.get() == "true"
+        }
+    }
+
+    private fun activateDaggerReflect(target: Project, extension: DelectExtension) {
         target.allprojects {
             configurations.all config@{
                 if (!extension.addReflectAnnotationProcessor) {
@@ -70,11 +85,6 @@ class DaggerReflectPlugin : Plugin<Project> {
                 }
             }
         }
-    }
-
-    private fun shouldActivateDaggerReflect(target: Project): Boolean {
-        val propertyProvider = target.providers.gradleProperty("dagger.reflect").forUseAtConfigurationTime()
-        return (propertyProvider.isPresent && propertyProvider.get() == "true")
     }
 
     private fun Project.whenLintPluginAdded(block: () -> Unit) {

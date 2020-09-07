@@ -2,6 +2,12 @@ package com.soundcloud.reflect
 
 open class DelectExtension {
     var daggerReflectVersion = "0.3.0"
+
+    /**
+     * Whether or not the plugin is enabled. If set, takes precedence over `gradle.properties` configuration
+     */
+    var enabled: Boolean? = null
+
     /**
      * By default, we use the Reflect Annotation Processor to connect the App's code the the
      * Dagger Reflect runtime as outlined in the partial reflection approach:

@@ -28,7 +28,7 @@ class DaggerReflectPluginIntegrationTest {
     fun `test plugin with dagger reflect enabled`() {
         setupJavaModuleTextFixtureAndDelectPlugin()
 
-        enableDaggerReflect()
+        enableDaggerReflectInGradleProperties()
         val result = GradleRunner.create()
             .withProjectDir(testProjectDir.root)
             .withPluginClasspath()
@@ -36,6 +36,59 @@ class DaggerReflectPluginIntegrationTest {
             .build()
 
         assertThat(result.output).contains("dagger reflect class is available")
+    }
+
+    @Test
+    fun `test plugin with dagger reflect enabled via extension`() {
+        val fixtureName = "java-module"
+        writeSettingsGradle(fixtureName)
+        copyProjectFixture(fixtureName)
+
+        testProjectDir.newFile("build.gradle").writeText(
+            """
+            plugins {
+                id 'com.soundcloud.delect'
+            }
+            delect {
+                enabled = true
+            }
+            """.trimIndent()
+        )
+
+        val result = GradleRunner.create()
+            .withProjectDir(testProjectDir.root)
+            .withPluginClasspath()
+            .withArguments("run")
+            .build()
+
+        assertThat(result.output).contains("dagger reflect class is available")
+    }
+
+    @Test
+    fun `test plugin with dagger reflect disabled via extension`() {
+        val fixtureName = "java-module"
+        writeSettingsGradle(fixtureName)
+        copyProjectFixture(fixtureName)
+
+        enableDaggerReflectInGradleProperties()
+        testProjectDir.newFile("build.gradle").writeText(
+            """
+            plugins {
+                id 'com.soundcloud.delect'
+            }
+            delect {
+                enabled = false
+            }
+            """.trimIndent()
+        )
+
+        val result = GradleRunner.create()
+            .withProjectDir(testProjectDir.root)
+            .withPluginClasspath()
+            .withArguments("run")
+            .build()
+
+        assertThat(result.output).contains("dagger reflect class not available")
     }
 
     @Test
@@ -54,7 +107,7 @@ class DaggerReflectPluginIntegrationTest {
 
         writeSettingsGradle(fixtureName)
         copyProjectFixture(fixtureName)
-        enableDaggerReflect()
+        enableDaggerReflectInGradleProperties()
 
         val result = GradleRunner.create()
             .withProjectDir(testProjectDir.root)
@@ -86,7 +139,7 @@ class DaggerReflectPluginIntegrationTest {
 
         writeSettingsGradle(fixtureName)
         copyProjectFixture(fixtureName)
-        enableDaggerReflect()
+        enableDaggerReflectInGradleProperties()
 
         val result = GradleRunner.create()
             .withProjectDir(testProjectDir.root)
@@ -101,7 +154,7 @@ class DaggerReflectPluginIntegrationTest {
     fun `is compatible with the configuration cache`() {
         setupJavaModuleTextFixtureAndDelectPlugin()
 
-        enableDaggerReflect()
+        enableDaggerReflectInGradleProperties()
         val runner = GradleRunner.create()
             .withProjectDir(testProjectDir.root)
             .withPluginClasspath()
@@ -146,7 +199,7 @@ class DaggerReflectPluginIntegrationTest {
         )
     }
 
-    private fun enableDaggerReflect() {
+    private fun enableDaggerReflectInGradleProperties() {
         testProjectDir.newFile("gradle.properties").writeText("dagger.reflect=true")
     }
 
