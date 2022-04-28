@@ -1,6 +1,6 @@
 ⚠️ **Delect has been retired!**
 
-After 2+ years of service it'd time to retire Delect. We won’t be developing the plugin further and we won’t provide support but you’re welcome to keep using Delect if it works for you ✌️
+After 2+ years of service it's time to retire Delect. We won’t be developing the plugin further and we won’t provide support but you’re welcome to keep using Delect if it works for you ✌️
 
 # Delect - The Gradle Plugin for Dagger Reflect
 
